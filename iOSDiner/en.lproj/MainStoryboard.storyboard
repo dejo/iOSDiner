@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11C74" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.1" toolsVersion="2182" systemVersion="11E53" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="2">
     <dependencies>
+        <deployment defaultVersion="1296" identifier="iOS"/>
         <development defaultVersion="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1181"/>
     </dependencies>
     <scenes>
+        <!--View Controller-->
         <scene sceneID="5">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
@@ -123,10 +125,10 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" id="Bd9-rE-Vvz">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" id="Scr-lm-rDb">
                                 <rect key="frame" x="209" y="146" width="109" height="80"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </scrollView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" id="Zz8-Kd-rZr">
                                 <rect key="frame" x="362" y="230" width="90" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -141,8 +143,8 @@
                     <connections>
                         <outlet property="ibAddItemButton" destination="1SP-fe-mWZ" id="pMB-ha-MAv"/>
                         <outlet property="ibChalkboardLabel" destination="TEk-bs-kKN" id="w1n-wp-L2q"/>
-                        <outlet property="ibCurrentItemImageView" destination="Bd9-rE-Vvz" id="Vqz-Od-RbA"/>
                         <outlet property="ibCurrentItemLabel" destination="Zz8-Kd-rZr" id="Tul-XK-gEF"/>
+                        <outlet property="ibCurrentItemScrollView" destination="Scr-lm-rDb" id="HHa-Mq-bxp"/>
                         <outlet property="ibNextItemButton" destination="PdS-Lz-WEZ" id="0ZI-4T-hlj"/>
                         <outlet property="ibPreviousItemButton" destination="qAB-jc-DVW" id="I2B-ig-gtY"/>
                         <outlet property="ibRemoveItemButton" destination="zxG-qh-5uR" id="A4q-93-2VL"/>
@@ -177,6 +179,7 @@
                 <relationship kind="outlet" name="ibChalkboardLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="ibCurrentItemImageView" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="ibCurrentItemLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="ibCurrentItemScrollView" candidateClass="UIScrollView"/>
                 <relationship kind="outlet" name="ibNextItemButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="ibPreviousItemButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="ibRemoveItemButton" candidateClass="UIButton"/>

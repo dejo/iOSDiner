@@ -17,12 +17,15 @@
 @synthesize ibNextItemButton;
 @synthesize ibTotalOrderButton;
 @synthesize ibChalkboardLabel;
-@synthesize ibCurrentItemImageView;
+@synthesize ibCurrentItemScrollView;
 @synthesize ibCurrentItemLabel;
 @synthesize inventory;     // <---- #2
 @synthesize order;     // <---- #2
 
 dispatch_queue_t queue; 
+UIImageView *previousItemImageView;
+UIImageView *currentItemImageView;
+UIImageView *nextItemImageView;
 
 - (void)didReceiveMemoryWarning
 {
@@ -36,6 +39,9 @@ dispatch_queue_t queue;
 
 #pragma mark - View lifecycle
 
+#define CURRENT_ITEM_IMAGE_WIDTH 109
+#define CURRENT_ITEM_IMAGE_HEIGHT 80
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -44,6 +50,18 @@ dispatch_queue_t queue;
     [self setOrder:[IODOrder new]];     // <---- #4
     
     queue = dispatch_queue_create("com.adamburkepile.queue",nil); // <======
+
+	previousItemImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CURRENT_ITEM_IMAGE_WIDTH, CURRENT_ITEM_IMAGE_HEIGHT)];
+	currentItemImageView = [[UIImageView alloc] initWithFrame:CGRectMake(CURRENT_ITEM_IMAGE_WIDTH, 0, CURRENT_ITEM_IMAGE_WIDTH, CURRENT_ITEM_IMAGE_HEIGHT)];
+	nextItemImageView = [[UIImageView alloc] initWithFrame:CGRectMake(CURRENT_ITEM_IMAGE_WIDTH*2, 0, CURRENT_ITEM_IMAGE_WIDTH, CURRENT_ITEM_IMAGE_HEIGHT)];
+	previousItemImageView.contentMode = UIViewContentModeScaleAspectFit;
+	currentItemImageView.contentMode = UIViewContentModeScaleAspectFit;
+	nextItemImageView.contentMode = UIViewContentModeScaleAspectFit;
+	[ibCurrentItemScrollView addSubview:previousItemImageView];
+	[ibCurrentItemScrollView addSubview:currentItemImageView];
+	[ibCurrentItemScrollView addSubview:nextItemImageView];
+	ibCurrentItemScrollView.contentSize = CGSizeMake(CURRENT_ITEM_IMAGE_WIDTH*3, CURRENT_ITEM_IMAGE_HEIGHT);
+	ibCurrentItemScrollView.contentOffset = CGPointMake(CURRENT_ITEM_IMAGE_WIDTH, 0);
 }
 
 - (void)viewDidUnload
@@ -54,8 +72,8 @@ dispatch_queue_t queue;
     [self setIbNextItemButton:nil];
     [self setIbTotalOrderButton:nil];
     [self setIbChalkboardLabel:nil];
-    [self setIbCurrentItemImageView:nil];
     [self setIbCurrentItemLabel:nil];
+    [self setIbCurrentItemScrollView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -110,7 +128,7 @@ dispatch_queue_t queue;
     [self updateCurrentInventoryItem];
     [self updateInventoryButtons];
     
-    UILabel* removeItemDisplay = [[UILabel alloc] initWithFrame:[ibCurrentItemImageView frame]];
+    UILabel* removeItemDisplay = [[UILabel alloc] initWithFrame:[ibCurrentItemScrollView frame]];
     [removeItemDisplay setCenter:[ibChalkboardLabel center]];
     [removeItemDisplay setText:@"-1"];
     [removeItemDisplay setTextAlignment:UITextAlignmentCenter];
@@ -121,7 +139,7 @@ dispatch_queue_t queue;
     
     [UIView animateWithDuration:1.0
                      animations:^{
-                         [removeItemDisplay setCenter:[ibCurrentItemImageView center]];
+                         [removeItemDisplay setCenter:[ibCurrentItemScrollView center]];
                          [removeItemDisplay setAlpha:0.0];
                      } completion:^(BOOL finished) {
                          [removeItemDisplay removeFromSuperview];
@@ -137,7 +155,7 @@ dispatch_queue_t queue;
     [self updateCurrentInventoryItem];
     [self updateInventoryButtons];
     
-    UILabel* addItemDisplay = [[UILabel alloc] initWithFrame:[ibCurrentItemImageView frame]];
+    UILabel* addItemDisplay = [[UILabel alloc] initWithFrame:[ibCurrentItemScrollView frame]];
     [addItemDisplay setText:@"+1"];
     [addItemDisplay setTextColor:[UIColor whiteColor]];
     [addItemDisplay setBackgroundColor:[UIColor clearColor]];
@@ -156,14 +174,29 @@ dispatch_queue_t queue;
 
 - (IBAction)ibaLoadPreviousItem:(id)sender {
     currentItemIndex--;
-    [self updateCurrentInventoryItem];
-    [self updateInventoryButtons];
+	[UIView animateWithDuration:0.25
+					 animations:^{
+						 [ibCurrentItemScrollView setContentOffset:CGPointMake(0, 0)];
+					 }
+					 completion:^(BOOL finished) {
+						 [self updateCurrentInventoryItem];
+						 [self updateInventoryButtons];
+					 }
+	 ];
 }
 
 - (IBAction)ibaLoadNextItem:(id)sender {
     currentItemIndex++;
-    [self updateCurrentInventoryItem];
-    [self updateInventoryButtons];
+	[UIView animateWithDuration:0.25
+					 animations:^{
+						 [ibCurrentItemScrollView setContentOffset:CGPointMake(CURRENT_ITEM_IMAGE_WIDTH*2, 0)];
+					 }
+					 completion:^(BOOL finished) {
+						 // reload image views, via helper method
+						 [self updateCurrentInventoryItem];
+						 [self updateInventoryButtons];
+					 }
+	 ];
 }
 
 - (IBAction)ibaCalculateTotal:(id)sender {
@@ -183,7 +216,22 @@ dispatch_queue_t queue;
     if (currentItemIndex >= 0 && currentItemIndex < [[self inventory] count]) {
         IODItem* currentItem = [[self inventory] objectAtIndex:currentItemIndex];
         [ibCurrentItemLabel setText:[currentItem name]];
-        [ibCurrentItemImageView setImage:[UIImage imageNamed:[currentItem pictureFile]]];
+		currentItemImageView.image = [UIImage imageNamed:[currentItem pictureFile]];
+		if (currentItemIndex > 0) {
+			IODItem* previousItem = [self.inventory objectAtIndex:currentItemIndex-1];
+			previousItemImageView.image = [UIImage imageNamed:[previousItem pictureFile]];
+		}
+		else {
+			previousItemImageView.image = nil;
+		}
+		if (currentItemIndex < self.inventory.count-1) {
+			IODItem* nextItem = [self.inventory objectAtIndex:currentItemIndex+1];
+			nextItemImageView.image = [UIImage imageNamed:[nextItem pictureFile]];
+		}
+		else {
+			nextItemImageView.image = nil;
+		}
+		[ibCurrentItemScrollView setContentOffset:CGPointMake(CURRENT_ITEM_IMAGE_WIDTH, 0)];
     }
 }
 

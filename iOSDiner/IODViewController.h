@@ -23,7 +23,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *ibNextItemButton;
 @property (weak, nonatomic) IBOutlet UIButton *ibTotalOrderButton;
 @property (weak, nonatomic) IBOutlet UILabel *ibChalkboardLabel;
-@property (weak, nonatomic) IBOutlet UIImageView *ibCurrentItemImageView;
+@property (weak, nonatomic) IBOutlet UIScrollView *ibCurrentItemScrollView;
 @property (weak, nonatomic) IBOutlet UILabel *ibCurrentItemLabel;
 
 - (IBAction)ibaRemoveItem:(id)sender;
